@@ -3,6 +3,73 @@
     margin: 0;
     background-color: #190c3f;
   }
+  .menu-container {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+  }
+
+  .menu-hidden {
+    display: none;
+  }
+
+  .menu-content {
+    text-align: center;
+    color: white;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .button {
+    display: block;
+    width: 200px;
+    margin: 1rem auto;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .play-btn {
+    background: #3b82f6;
+  }
+
+  .play-btn:hover {
+    background: #2563eb;
+  }
+
+  .instructions-btn {
+    background: #22c55e;
+  }
+
+  .instructions-btn:hover {
+    background: #16a34a;
+  }
+
+  .quit-btn {
+    background: #ef4444;
+  }
+
+  .quit-btn:hover {
+    background: #dc2626;
+  }
+
+  .back-btn {
+    background: #6b7280;
+  }
+
+  .back-btn:hover {
+    background: #4b5563;
+  }
 </style>
 
 <script
@@ -127,6 +194,8 @@
     const zCollsisions = box1.back >= box2.front && box1.front <= box2.back;
     return xCollisions && yCollisions && zCollsisions;
   }
+
+  const [showMenu, setShowMenu] = React.useState(true);
 
   /***************************************
    * GEOMERTY
@@ -268,5 +337,22 @@
 
     frames++;
   }
+
+  function pause() {
+    cancelAnimationFrame(animationId);
+  }
+
+  function resume() {
+    animate();
+  }
+
+  function quit() {
+    cancelAnimationFrame(animationId);
+    scene.remove(cube);
+    scene.remove(ground);
+    enemies.forEach((enemy) => scene.remove(enemy));
+    setShowMenu(true);
+  }
+
   animate();
 </script>
