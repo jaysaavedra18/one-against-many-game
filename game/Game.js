@@ -15,6 +15,7 @@ export class Game {
         this.setupObjects();
         this.setupLights();
         this.controls = new Controls();
+        this.reset();
     }
 
     setupScene() {
@@ -55,6 +56,29 @@ export class Game {
         this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     }
 
+    reset() {
+        this.enemies = [];
+        this.playerMovementSpeed = 0.05;
+        this.spawnRate = 200;
+        this.frames = 0;
+        this.isGameOver = false; // Add this flag
+
+        // Reset player position
+        if (this.cube) {
+            this.cube.position.set(0, 0, 0);
+            this.cube.velocity = { x: 0, y: -0.01, z: 0 };
+        }
+
+        // Remove all existing enemies
+        if (this.scene) {
+            [...this.enemies].forEach(enemy => {
+                this.scene.remove(enemy);
+            });
+            this.enemies = [];
+        }
+
+    }
+
     animate = () => {
         this.animationId = requestAnimationFrame(this.animate);
         this.renderer.render(this.scene, this.camera);
@@ -84,12 +108,22 @@ export class Game {
     }
 
     updateEnemies() {
-        this.enemies.forEach((enemy) => {
+        // Remove enemies that have gone too far past the player
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const enemy = this.enemies[i];
             enemy.update(this.ground);
+
+            // Remove enemies that are behind the player
+            if (enemy.position.z > this.cube.position.z + 10) {
+                this.scene.remove(enemy);
+                this.enemies.splice(i, 1);
+                continue;
+            }
+
             if (boxCollision(this.cube, enemy)) {
                 this.gameOver();
             }
-        });
+        }
     }
 
     spawnEnemies() {
@@ -109,11 +143,13 @@ export class Game {
     }
 
     gameOver() {
+        this.isGameOver = true;
         cancelAnimationFrame(this.animationId);
         document.getElementById("menuContainer").classList.remove("menu-hidden");
     }
 
     start() {
+        this.reset(); // Reset game state before starting
         this.animate();
     }
 
