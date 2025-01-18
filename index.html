@@ -89,7 +89,7 @@
         this.position.y = ground.top + this.height / 2;
         this.velocity.y *= -0.8;
         // Stop infinite tiny bounces
-        if (Math.abs(this.velocity.y) < 0.0175) {
+        if (Math.abs(this.velocity.y) < 0.02) {
           this.velocity.y = 0;
         }
       } else {
