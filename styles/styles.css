@@ -1,0 +1,64 @@
+/* styles.styles.css */
+body {
+  margin: 0;
+  background-color: #190c3f;
+}
+.menu-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.menu-hidden {
+  display: none;
+}
+
+.menu-content {
+  text-align: center;
+  color: white;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.button {
+  display: block;
+  width: 200px;
+  margin: 1rem auto;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.play-btn {
+  background: #3b82f6;
+}
+
+.play-btn:hover {
+  background: #2563eb;
+}
+
+.instructions-btn {
+  background: #22c55e;
+}
+
+.instructions-btn:hover {
+  background: #16a34a;
+}
+
+.back-btn {
+  background: #6b7280;
+}
+
+.back-btn:hover {
+  background: #4b5563;
+}

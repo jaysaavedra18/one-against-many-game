@@ -1,385 +1,47 @@
-<style>
-  body {
-    margin: 0;
-    background-color: #190c3f;
-  }
-  .menu-container {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-  }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cube Runner</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+  <body>
+    <div id="menuContainer" class="menu-container">
+      <div id="mainMenu" class="menu-content">
+        <h1 class="title">Cube Runner</h1>
+        <button class="button play-btn" onclick="startGame()">Play Game</button>
+        <button class="button instructions-btn" onclick="showInstructions()">
+          Instructions
+        </button>
+      </div>
 
-  .menu-hidden {
-    display: none;
-  }
+      <div id="instructionsMenu" class="menu-content menu-hidden">
+        <h2 class="title">How to Play</h2>
+        <p>Use WASD to move the cube</p>
+        <p>Press SPACE to jump</p>
+        <p>Avoid the red enemy cubes!</p>
+        <button class="button back-btn" onclick="showMain()">
+          Back to Menu
+        </button>
+      </div>
+    </div>
 
-  .menu-content {
-    text-align: center;
-    color: white;
-  }
-
-  .title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .button {
-    display: block;
-    width: 200px;
-    margin: 1rem auto;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .play-btn {
-    background: #3b82f6;
-  }
-
-  .play-btn:hover {
-    background: #2563eb;
-  }
-
-  .instructions-btn {
-    background: #22c55e;
-  }
-
-  .instructions-btn:hover {
-    background: #16a34a;
-  }
-
-  .back-btn {
-    background: #6b7280;
-  }
-
-  .back-btn:hover {
-    background: #4b5563;
-  }
-</style>
-
-<script>
-  function startGame() {
-    document.getElementById("menuContainer").classList.add("menu-hidden");
-    animate();
-  }
-
-  function showInstructions() {
-    document.getElementById("mainMenu").classList.add("menu-hidden");
-    document.getElementById("instructionsMenu").classList.remove("menu-hidden");
-  }
-
-  function showMain() {
-    document.getElementById("mainMenu").classList.remove("menu-hidden");
-    document.getElementById("instructionsMenu").classList.add("menu-hidden");
-  }
-</script>
-
-<div id="menuContainer" class="menu-container">
-  <div id="mainMenu" class="menu-content">
-    <h1 class="title">Cube Runner</h1>
-    <button class="button play-btn" onclick="startGame()">Play Game</button>
-    <button class="button instructions-btn" onclick="showInstructions()">
-      Instructions
-    </button>
-  </div>
-
-  <div id="instructionsMenu" class="menu-content menu-hidden">
-    <h2 class="title">How to Play</h2>
-    <p>Use WASD to move the cube</p>
-    <p>Press SPACE to jump</p>
-    <p>Avoid the red enemy cubes!</p>
-    <button class="button back-btn" onclick="showMain()">Back to Menu</button>
-  </div>
-</div>
-
-<script
-  async
-  src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
-></script>
-
-<script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
-    }
-  }
-</script>
-
-<script type="module">
-  import * as THREE from "three";
-  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-  let animationId = null;
-  /***************************************
-   * SCENE, CAMERA, RENDERING, CONTROLS
-   ***************************************/
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.set(1, 2, 7);
-
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.shadowMap.enabled = true;
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  const controls = new OrbitControls(camera, renderer.domElement);
-
-  /***************************************
-   * OBJECTS
-   ***************************************/
-  class Box extends THREE.Mesh {
-    constructor({
-      width,
-      height,
-      depth,
-      color = "#ffffff",
-      velocity = {
-        x: 0,
-        y: 0,
-        z: 0,
-      },
-      position = { x: 0, y: 0, z: 0 },
-      gravity = -0.005,
-      zAcceration = false,
-    }) {
-      super(
-        new THREE.BoxGeometry(width, height, depth),
-        // Materials modify the object finish, all materials other than the basic require light
-        new THREE.MeshStandardMaterial({ color })
-      );
-      this.height = height;
-      this.width = width;
-      this.depth = depth;
-      this.position.set(position.x, position.y, position.z);
-
-      this.bottom = this.position.y - this.height / 2;
-      this.top = this.position.y + this.height / 2;
-      this.left = this.position.x - this.width / 2;
-      this.right = this.position.x + this.width / 2;
-      this.front = this.position.z - this.depth / 2;
-      this.back = this.position.z + this.depth / 2;
-
-      this.velocity = velocity;
-      this.gravity = gravity;
-      this.zAcceration = zAcceration;
-    }
-
-    updateSides() {
-      this.bottom = this.position.y - this.height / 2;
-      this.top = this.position.y + this.height / 2;
-      this.left = this.position.x - this.width / 2;
-      this.right = this.position.x + this.width / 2;
-      this.front = this.position.z - this.depth / 2;
-      this.back = this.position.z + this.depth / 2;
-    }
-
-    update(ground) {
-      this.updateSides();
-
-      if (this.zAcceration) this.velocity.z += 0.001;
-
-      this.position.x += this.velocity.x;
-      this.position.z += this.velocity.z;
-      this.position.y += this.velocity.y;
-
-      this.applyGravity(ground);
-    }
-    // Add gravity to the object
-    applyGravity(ground) {
-      this.velocity.y += this.gravity;
-
-      if (boxCollision(this, ground)) {
-        // Place cube exactly on the ground, then apply bounce
-        this.position.y = ground.top + this.height / 2;
-        const friction = 0.5;
-        this.velocity.y *= -friction;
-        // Stop infinite tiny bounces
-        if (Math.abs(this.velocity.y) < 0.02) {
-          this.velocity.y = 0;
+    <!-- Three.js dependencies -->
+    <script
+      async
+      src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
+    ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
         }
-      } else {
-        this.position.y += this.velocity.y;
       }
-    }
-  }
+    </script>
 
-  function boxCollision(box1, box2) {
-    const xCollisions = box1.right >= box2.left && box1.left <= box2.right;
-    const yCollisions =
-      box1.bottom + box1.velocity.y <= box2.top && box1.top >= box2.bottom;
-    const zCollsisions = box1.back >= box2.front && box1.front <= box2.back;
-    return xCollisions && yCollisions && zCollsisions;
-  }
-
-  /***************************************
-   * GEOMERTY
-   ***************************************/
-  const cube = new Box({
-    width: 1,
-    height: 1,
-    depth: 1,
-    color: 0x1e90ff,
-    velocity: {
-      x: 0,
-      y: -0.01,
-      z: 0,
-    },
-  });
-  cube.castShadow = true;
-  scene.add(cube);
-
-  const ground = new Box({
-    width: 75,
-    height: 0.1,
-    depth: 75,
-    position: { x: 0, y: -2, z: 0 },
-  });
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  /******************************************
-   * LIGHTS
-   ******************************************/
-  const light = new THREE.DirectionalLight(0xffffff, 5);
-  light.castShadow = true;
-  light.position.set(3, 5, 1);
-  scene.add(light);
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-
-  /***************************************
-   * KEYSTROKES
-   ***************************************/
-  const keys = {
-    w: { pressed: false },
-    a: { pressed: false },
-    s: { pressed: false },
-    d: { pressed: false },
-    space: { pressed: false },
-  };
-
-  window.addEventListener("keydown", (e) => {
-    switch (e.code) {
-      case "KeyW":
-        keys.w.pressed = true;
-        break;
-      case "KeyA":
-        keys.a.pressed = true;
-        break;
-      case "KeyS":
-        keys.s.pressed = true;
-        break;
-      case "KeyD":
-        keys.d.pressed = true;
-        break;
-      case "Space":
-        keys.space.pressed = true;
-        break;
-    }
-  });
-
-  window.addEventListener("keyup", (e) => {
-    switch (e.code) {
-      case "KeyW":
-        keys.w.pressed = false;
-        break;
-      case "KeyA":
-        keys.a.pressed = false;
-        break;
-      case "KeyS":
-        keys.s.pressed = false;
-        break;
-      case "KeyD":
-        keys.d.pressed = false;
-        break;
-      case "Space":
-        keys.space.pressed = false;
-        break;
-    }
-  });
-
-  /***************************************
-   * ANIMATION
-   ***************************************/
-  const enemies = [];
-  const playerMovementSpeed = 0.05;
-  let spawnRate = 200;
-  let frames = 0;
-  function animate() {
-    // Grab animation Id for pause, quit, etc.
-    animationId = requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-    // Ensure no movement when no keys are pressed
-    cube.velocity.x = 0;
-    cube.velocity.z = 0;
-    // Apply velocity for movement controls
-    if (keys.a.pressed) cube.velocity.x = -playerMovementSpeed; // Left
-    else if (keys.d.pressed) cube.velocity.x = playerMovementSpeed; // Right
-
-    if (keys.w.pressed) cube.velocity.z = -playerMovementSpeed; // Forward
-    else if (keys.s.pressed) cube.velocity.z = playerMovementSpeed; // Back
-
-    if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1; // Jump
-    cube.update(ground);
-    // Handle enemt movement and collisions
-    enemies.forEach((enemy) => {
-      enemy.update(ground);
-      if (boxCollision(cube, enemy)) {
-        cancelAnimationFrame(animationId);
-      }
-    });
-    // Spawn an enemy at the specified spawn rate
-    if (frames % spawnRate === 0) {
-      if (spawnRate > 20) spawnRate -= 10;
-      const enemy = new Box({
-        width: 1,
-        height: 1,
-        depth: 1,
-        position: { x: (Math.random() - 0.5) * 30, y: 0, z: -35 },
-        color: "red",
-        velocity: {
-          x: 0,
-          y: 0,
-          z: 0.005,
-        },
-        zAcceration: true,
-      });
-      enemy.castShadow = true;
-      scene.add(enemy);
-      enemies.push(enemy);
-    }
-
-    frames++;
-  }
-
-  function pause() {
-    cancelAnimationFrame(animationId);
-  }
-
-  function resume() {
-    animate();
-  }
-
-  // Modify your existing quit function to include:
-  function quit() {
-    cancelAnimationFrame(animationId);
-    scene.remove(cube);
-    scene.remove(ground);
-    enemies.forEach((enemy) => scene.remove(enemy));
-    document.getElementById("menuContainer").classList.remove("menu-hidden");
-  }
-  window.animate = animate;
-  window.quit = quit;
-</script>
+    <!-- Main game script -->
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
