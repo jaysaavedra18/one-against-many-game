@@ -116,7 +116,8 @@
 
   function boxCollision(box1, box2) {
     const xCollisions = box1.right >= box2.left && box1.left <= box2.right;
-    const yCollisions = box1.bottom <= box2.top && box1.top >= box2.bottom;
+    const yCollisions =
+      box1.bottom + box1.velocity.y <= box2.top && box1.top >= box2.bottom;
     const zCollsisions = box1.back >= box2.front && box1.front <= box2.back;
     return xCollisions && yCollisions && zCollsisions;
   }
@@ -210,11 +211,28 @@
         break;
     }
   });
+
+  const enemy = new Box({
+    width: 1,
+    height: 1,
+    depth: 1,
+    position: { x: 0, y: 0, z: -4 },
+    color: "red",
+    velocity: {
+      x: 0,
+      y: 0,
+      z: 0.005,
+    },
+  });
+  enemy.castShadow = true;
+  scene.add(enemy);
+  const enemies = [enemy];
+
   /***************************************
    * ANIMATION
    ***************************************/
   function animate() {
-    requestAnimationFrame(animate);
+    const animationId = requestAnimationFrame(animate);
     renderer.render(scene, camera);
 
     cube.velocity.x = 0;
@@ -229,6 +247,12 @@
     if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1;
 
     cube.update(ground);
+    enemies.forEach((enemy) => {
+      enemy.update(ground);
+      if (boxCollision(cube, enemy)) {
+        cancelAnimationFrame(animationId);
+      }
+    });
   }
   animate();
 </script>
