@@ -56,6 +56,7 @@
       },
       position = { x: 0, y: 0, z: 0 },
       gravity = -0.005,
+      zAcceration = false,
     }) {
       super(
         new THREE.BoxGeometry(width, height, depth),
@@ -76,6 +77,7 @@
 
       this.velocity = velocity;
       this.gravity = gravity;
+      this.zAcceration = zAcceration;
     }
 
     updateSides() {
@@ -89,6 +91,8 @@
 
     update(ground) {
       this.updateSides();
+
+      if (this.zAcceration) this.velocity.z += 0.001;
 
       this.position.x += this.velocity.x;
       this.position.z += this.velocity.z;
@@ -223,6 +227,7 @@
       y: 0,
       z: 0.005,
     },
+    zAcceration: true,
   });
   enemy.castShadow = true;
   scene.add(enemy);
