@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Box } from '../classes/Box.js';
 import { Controls } from './controls.js';
+import { boxCollision } from '../utils/collision.js';
 
 export class Game {
     constructor() {
@@ -139,6 +140,7 @@ export class Game {
             enemy.castShadow = true;
             this.scene.add(enemy);
             this.enemies.push(enemy);
+            console.log("spawning enemy", this.enemies.length);
         }
     }
 
