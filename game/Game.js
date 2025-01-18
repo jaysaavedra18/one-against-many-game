@@ -58,7 +58,6 @@ export class Game {
     }
 
     reset() {
-        this.enemies = [];
         this.playerMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
@@ -75,9 +74,9 @@ export class Game {
             [...this.enemies].forEach(enemy => {
                 this.scene.remove(enemy);
             });
-            this.enemies = [];
         }
-
+        // Clear the enemies array
+        this.enemies = [];
     }
 
     animate = () => {
