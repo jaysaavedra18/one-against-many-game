@@ -21,7 +21,9 @@
 <script type="module">
   import * as THREE from "three";
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
+  /***************************************
+   * SCENE, CAMERA, RENDERING, CONTROLS
+   ***************************************/
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     75,
@@ -29,25 +31,44 @@
     0.1,
     1000
   );
+  camera.position.z = 5;
 
   const renderer = new THREE.WebGLRenderer();
+  renderer.shadowMap.enabled = true;
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   const controls = new OrbitControls(camera, renderer.domElement);
 
+  /***************************************
+   * GEOMERTY, MATERIAL, LIGHT
+   ***************************************/
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  // Materials modify the object finish, all materials other than the basic require light
+  const material = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
   const cube = new THREE.Mesh(geometry, material);
+  cube.castShadow = true;
   scene.add(cube);
 
-  camera.position.z = 5;
+  const ground = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 0.5, 10),
+    new THREE.MeshStandardMaterial({ color: 0xffffff })
+  );
+  ground.receiveShadow = true;
+  ground.position.y = -2;
+  scene.add(ground);
+
+  // Lighting
+  const light = new THREE.DirectionalLight(0xffffff, 5);
+  light.castShadow = true;
+  light.position.set(3, 3, 2);
+  scene.add(light);
 
   function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    // cube.rotation.x += 0.01;
+    // cube.rotation.y += 0.01;
   }
   animate();
 </script>
