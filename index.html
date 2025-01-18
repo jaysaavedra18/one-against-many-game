@@ -1,6 +1,7 @@
 <style>
   body {
     margin: 0;
+    background-color: #190c3f;
   }
 </style>
 
@@ -31,9 +32,9 @@
     0.1,
     1000
   );
-  camera.position.set(3, 3, 8);
+  camera.position.set(1, 2, 7);
 
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.shadowMap.enabled = true;
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -107,7 +108,8 @@
       if (boxCollision(this, ground)) {
         // Place cube exactly on the ground, then apply bounce
         this.position.y = ground.top + this.height / 2;
-        this.velocity.y *= -0.8;
+        const friction = 0.5;
+        this.velocity.y *= -friction;
         // Stop infinite tiny bounces
         if (Math.abs(this.velocity.y) < 0.02) {
           this.velocity.y = 0;
@@ -144,9 +146,9 @@
   scene.add(cube);
 
   const ground = new Box({
-    width: 10,
+    width: 75,
     height: 0.1,
-    depth: 10,
+    depth: 75,
     position: { x: 0, y: -2, z: 0 },
   });
   ground.receiveShadow = true;
@@ -157,13 +159,10 @@
    ******************************************/
   const light = new THREE.DirectionalLight(0xffffff, 5);
   light.castShadow = true;
-  light.position.set(3, 5, 2);
+  light.position.set(3, 5, 1);
   scene.add(light);
 
-  const light2 = new THREE.DirectionalLight(0xffffff, 5);
-  light2.castShadow = true;
-  light2.position.set(3, -5, 2);
-  scene.add(light2);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
   /***************************************
    * KEYSTROKES
@@ -216,48 +215,58 @@
     }
   });
 
-  const enemy = new Box({
-    width: 1,
-    height: 1,
-    depth: 1,
-    position: { x: 0, y: 0, z: -4 },
-    color: "red",
-    velocity: {
-      x: 0,
-      y: 0,
-      z: 0.005,
-    },
-    zAcceration: true,
-  });
-  enemy.castShadow = true;
-  scene.add(enemy);
-  const enemies = [enemy];
-
   /***************************************
    * ANIMATION
    ***************************************/
+  const enemies = [];
+  const playerMovementSpeed = 0.05;
+  let spawnRate = 200;
+  let frames = 0;
   function animate() {
+    // Grab animation Id for pause, quit, etc.
     const animationId = requestAnimationFrame(animate);
     renderer.render(scene, camera);
-
+    // Ensure no movement when no keys are pressed
     cube.velocity.x = 0;
     cube.velocity.z = 0;
-    // Movement code
-    if (keys.a.pressed) cube.velocity.x = -0.04;
-    else if (keys.d.pressed) cube.velocity.x = 0.04;
+    // Apply velocity for movement controls
+    if (keys.a.pressed) cube.velocity.x = -playerMovementSpeed; // Left
+    else if (keys.d.pressed) cube.velocity.x = playerMovementSpeed; // Right
 
-    if (keys.w.pressed) cube.velocity.z = -0.04;
-    else if (keys.s.pressed) cube.velocity.z = 0.04;
+    if (keys.w.pressed) cube.velocity.z = -playerMovementSpeed; // Forward
+    else if (keys.s.pressed) cube.velocity.z = playerMovementSpeed; // Backward
 
-    if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1;
-
+    if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1; // Jump
     cube.update(ground);
+    // Handle enemt movement and collisions
     enemies.forEach((enemy) => {
       enemy.update(ground);
       if (boxCollision(cube, enemy)) {
         cancelAnimationFrame(animationId);
       }
     });
+    // Spawn an enemy at the specified spawn rate
+    if (frames % spawnRate === 0) {
+      if (spawnRate > 20) spawnRate -= 10;
+      const enemy = new Box({
+        width: 1,
+        height: 1,
+        depth: 1,
+        position: { x: (Math.random() - 0.5) * 30, y: 0, z: -35 },
+        color: "red",
+        velocity: {
+          x: 0,
+          y: 0,
+          z: 0.005,
+        },
+        zAcceration: true,
+      });
+      enemy.castShadow = true;
+      scene.add(enemy);
+      enemies.push(enemy);
+    }
+
+    frames++;
   }
   animate();
 </script>
