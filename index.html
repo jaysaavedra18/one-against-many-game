@@ -55,14 +55,6 @@
     background: #16a34a;
   }
 
-  .quit-btn {
-    background: #ef4444;
-  }
-
-  .quit-btn:hover {
-    background: #dc2626;
-  }
-
   .back-btn {
     background: #6b7280;
   }
@@ -71,6 +63,41 @@
     background: #4b5563;
   }
 </style>
+
+<script>
+  function startGame() {
+    document.getElementById("menuContainer").classList.add("menu-hidden");
+    animate();
+  }
+
+  function showInstructions() {
+    document.getElementById("mainMenu").classList.add("menu-hidden");
+    document.getElementById("instructionsMenu").classList.remove("menu-hidden");
+  }
+
+  function showMain() {
+    document.getElementById("mainMenu").classList.remove("menu-hidden");
+    document.getElementById("instructionsMenu").classList.add("menu-hidden");
+  }
+</script>
+
+<div id="menuContainer" class="menu-container">
+  <div id="mainMenu" class="menu-content">
+    <h1 class="title">Cube Runner</h1>
+    <button class="button play-btn" onclick="startGame()">Play Game</button>
+    <button class="button instructions-btn" onclick="showInstructions()">
+      Instructions
+    </button>
+  </div>
+
+  <div id="instructionsMenu" class="menu-content menu-hidden">
+    <h2 class="title">How to Play</h2>
+    <p>Use WASD to move the cube</p>
+    <p>Press SPACE to jump</p>
+    <p>Avoid the red enemy cubes!</p>
+    <button class="button back-btn" onclick="showMain()">Back to Menu</button>
+  </div>
+</div>
 
 <script
   async
@@ -89,6 +116,7 @@
 <script type="module">
   import * as THREE from "three";
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+  let animationId = null;
   /***************************************
    * SCENE, CAMERA, RENDERING, CONTROLS
    ***************************************/
@@ -195,8 +223,6 @@
     return xCollisions && yCollisions && zCollsisions;
   }
 
-  const [showMenu, setShowMenu] = React.useState(true);
-
   /***************************************
    * GEOMERTY
    ***************************************/
@@ -293,7 +319,7 @@
   let frames = 0;
   function animate() {
     // Grab animation Id for pause, quit, etc.
-    const animationId = requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
     renderer.render(scene, camera);
     // Ensure no movement when no keys are pressed
     cube.velocity.x = 0;
@@ -346,13 +372,14 @@
     animate();
   }
 
+  // Modify your existing quit function to include:
   function quit() {
     cancelAnimationFrame(animationId);
     scene.remove(cube);
     scene.remove(ground);
     enemies.forEach((enemy) => scene.remove(enemy));
-    setShowMenu(true);
+    document.getElementById("menuContainer").classList.remove("menu-hidden");
   }
-
-  animate();
+  window.animate = animate;
+  window.quit = quit;
 </script>
