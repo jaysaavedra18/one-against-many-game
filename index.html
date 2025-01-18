@@ -234,7 +234,7 @@
     else if (keys.d.pressed) cube.velocity.x = playerMovementSpeed; // Right
 
     if (keys.w.pressed) cube.velocity.z = -playerMovementSpeed; // Forward
-    else if (keys.s.pressed) cube.velocity.z = playerMovementSpeed; // Backward
+    else if (keys.s.pressed) cube.velocity.z = playerMovementSpeed; // Back
 
     if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1; // Jump
     cube.update(ground);
