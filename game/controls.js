@@ -6,6 +6,10 @@ export class Controls {
             s: { pressed: false },
             d: { pressed: false },
             space: { pressed: false },
+            arrowUp: { pressed: false },
+            arrowDown: { pressed: false },
+            arrowLeft: { pressed: false },
+            arrowRight: { pressed: false },
         };
         this.setupEventListeners();
     }
