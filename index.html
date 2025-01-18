@@ -75,6 +75,9 @@
     update(ground) {
       this.bottom = this.position.y - this.height / 2;
       this.top = this.position.y + this.height / 2;
+      this.position.x += this.velocity.x;
+      this.position.z += this.velocity.z;
+      this.position.y += this.velocity.y;
       this.applyGravity();
     }
     // Add gravity to the object
@@ -82,7 +85,13 @@
       this.velocity.y += this.gravity;
 
       if (this.bottom + this.velocity.y <= ground.top) {
-        this.velocity.y = this.velocity.y * -0.8;
+        // Place cube exactly on the ground, then apply bounce
+        this.position.y = ground.top + this.height / 2;
+        this.velocity.y *= -0.8;
+        // Stop infinite tiny bounces
+        if (Math.abs(this.velocity.y) < 0.0175) {
+          this.velocity.y = 0;
+        }
       } else {
         this.position.y += this.velocity.y;
       }
@@ -131,16 +140,71 @@
   /***************************************
    * KEYSTROKES
    ***************************************/
+  const keys = {
+    w: { pressed: false },
+    a: { pressed: false },
+    s: { pressed: false },
+    d: { pressed: false },
+    space: { pressed: false },
+  };
+
   window.addEventListener("keydown", (e) => {
-    console.log(e);
+    switch (e.code) {
+      case "KeyW":
+        keys.w.pressed = true;
+        break;
+      case "KeyA":
+        keys.a.pressed = true;
+        break;
+      case "KeyS":
+        keys.s.pressed = true;
+        break;
+      case "KeyD":
+        keys.d.pressed = true;
+        break;
+      case "Space":
+        keys.space.pressed = true;
+        break;
+    }
   });
 
+  window.addEventListener("keyup", (e) => {
+    switch (e.code) {
+      case "KeyW":
+        keys.w.pressed = false;
+        break;
+      case "KeyA":
+        keys.a.pressed = false;
+        break;
+      case "KeyS":
+        keys.s.pressed = false;
+        break;
+      case "KeyD":
+        keys.d.pressed = false;
+        break;
+      case "Space":
+        keys.space.pressed = false;
+        break;
+    }
+  });
   /***************************************
    * ANIMATION
    ***************************************/
   function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+
+    cube.velocity.x = 0;
+    cube.velocity.z = 0;
+    // Movement code
+    if (keys.a.pressed) cube.velocity.x = -0.04;
+    else if (keys.d.pressed) cube.velocity.x = 0.04;
+
+    if (keys.w.pressed) cube.velocity.z = -0.04;
+    else if (keys.s.pressed) cube.velocity.z = 0.04;
+
+    if (keys.space.pressed && cube.bottom <= ground.top) cube.velocity.y = 0.1;
+
     cube.update(ground);
   }
   animate();
