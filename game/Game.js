@@ -66,7 +66,7 @@ export class Game {
         light.shadow.mapSize.width = 2048;  // Higher resolution for better shadow quality
         light.shadow.mapSize.height = 2048;
         light.shadow.camera.near = 1;       // Shadow camera near clipping plane
-        light.shadow.camera.far = 50;      // Shadow camera far clipping plane, covering the entire area
+        light.shadow.camera.far = 100;      // Shadow camera far clipping plane, covering the entire area
         light.shadow.camera.left = -50;    // Set the left boundary of the shadow camera
         light.shadow.camera.right = 50;    // Set the right boundary
         light.shadow.camera.top = 50;      // Set the top boundary
