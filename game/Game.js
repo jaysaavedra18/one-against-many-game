@@ -65,10 +65,10 @@ export class Game {
         light.shadow.mapSize.height = 2048;
         light.shadow.camera.near = 1;       // Shadow camera near clipping plane
         light.shadow.camera.far = 50;      // Shadow camera far clipping plane, covering the entire area
-        light.shadow.camera.left = -25;    // Set the left boundary of the shadow camera
-        light.shadow.camera.right = 25;    // Set the right boundary
-        light.shadow.camera.top = 25;      // Set the top boundary
-        light.shadow.camera.bottom = -25;  // Set the bottom boundary
+        light.shadow.camera.left = -50;    // Set the left boundary of the shadow camera
+        light.shadow.camera.right = 50;    // Set the right boundary
+        light.shadow.camera.top = 50;      // Set the top boundary
+        light.shadow.camera.bottom = -50;  // Set the bottom boundary
 
 
         this.scene.add(light);
