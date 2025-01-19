@@ -142,14 +142,16 @@ export class Game {
 
     updateCameraPosition() {
         // Calculate camera position based on player rotation
-        // const distance = 7;
-        // const height = 10;
-        // const angle = this.playerRotation;
+        const distance = 7;
+        const height = 4;
+        const angle = this.playerRotation;
+        const offsetAngle = Math.PI / 8;
+
 
         // // Position the camera behind the player based on rotation
-        // this.camera.position.z = this.cube.position.y - Math.sin(angle) * distance;
-        // this.camera.position.z = this.cube.position.z - Math.sin(angle) * distance;
-        // this.camera.position.x = this.cube.position.x + height;
+        this.camera.position.x = this.cube.position.x + (Math.sin(angle + offsetAngle) * distance);
+        this.camera.position.y = this.cube.position.y + height;
+        this.camera.position.z = this.cube.position.z + (Math.cos(angle + offsetAngle) * distance);
 
         // Look at player
         this.camera.lookAt(this.cube.position);
