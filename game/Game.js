@@ -8,9 +8,10 @@ export class Game {
     constructor() {
         this.animationId = null;
         this.enemies = [];
-        this.playerMovementSpeed = 0.05;
+        this.playerMovementSpeed = 0.10;
         this.spawnRate = 200;
         this.frames = 0;
+        this.rotationSpeed = 0.05;
         this.playerRotation = 0; // Track player rotation angle
 
         this.setupScene();
@@ -30,7 +31,8 @@ export class Game {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
 
-        this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+        // Debugging camera controls
+        // this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
     }
 
     setupObjects() {
@@ -59,7 +61,6 @@ export class Game {
     }
 
     reset() {
-        this.playerMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
         this.isGameOver = false; // Add this flag
@@ -91,27 +92,67 @@ export class Game {
         this.frames++;
     }
 
-    updateCamera() {
-        // Rotating the camera left and right
-        if (this.controls.keys.arrowLeft.pressed) this.camera.position.x -= 0.1;
-        else if (this.controls.keys.arrowRight.pressed) this.camera.position.x += 0.1;
-    }
-
     updatePlayer() {
+        // Handle rotations
+        if (this.controls.keys.arrowLeft.pressed) {
+            this.playerRotation += this.rotationSpeed;
+            this.cube.rotation.y = this.playerRotation;
+            this.updateCameraPosition();
+        } else if (this.controls.keys.arrowRight.pressed) {
+            this.playerRotation -= this.rotationSpeed;
+            this.cube.rotation.y = this.playerRotation;
+            this.updateCameraPosition();
+        }
+
+        // Calculate movement direction based on rotation
+        const forward = new THREE.Vector3(0, 0, -1);
+        forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.playerRotation);
+        const right = new THREE.Vector3(1, 0, 0);
+        right.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.playerRotation);
+
         this.cube.velocity.x = 0;
         this.cube.velocity.z = 0;
 
-        if (this.controls.keys.a.pressed) this.cube.velocity.x = -this.playerMovementSpeed;
-        else if (this.controls.keys.d.pressed) this.cube.velocity.x = this.playerMovementSpeed;
+        // Apply movement in the rotated direction
+        if (this.controls.keys.w.pressed) {
+            this.cube.velocity.x = forward.x * this.playerMovementSpeed;
+            this.cube.velocity.z = forward.z * this.playerMovementSpeed;
+        }
+        else if (this.controls.keys.s.pressed) {
+            this.cube.velocity.x = -forward.x * this.playerMovementSpeed;
+            this.cube.velocity.z = -forward.z * this.playerMovementSpeed;
+        }
 
-        if (this.controls.keys.w.pressed) this.cube.velocity.z = -this.playerMovementSpeed;
-        else if (this.controls.keys.s.pressed) this.cube.velocity.z = this.playerMovementSpeed;
+        if (this.controls.keys.a.pressed) {
+            this.cube.velocity.x = -right.x * this.playerMovementSpeed;
+            this.cube.velocity.z = -right.z * this.playerMovementSpeed;
+        }
+        else if (this.controls.keys.d.pressed) {
+            this.cube.velocity.x = right.x * this.playerMovementSpeed;
+            this.cube.velocity.z = right.z * this.playerMovementSpeed;
+        }
 
         if (this.controls.keys.space.pressed && this.cube.bottom <= this.ground.top) {
             this.cube.velocity.y = 0.1;
         }
 
         this.cube.update(this.ground);
+        this.updateCameraPosition();
+    }
+
+    updateCameraPosition() {
+        // Calculate camera position based on player rotation
+        // const distance = 7;
+        // const height = 10;
+        // const angle = this.playerRotation;
+
+        // // Position the camera behind the player based on rotation
+        // this.camera.position.z = this.cube.position.y - Math.sin(angle) * distance;
+        // this.camera.position.z = this.cube.position.z - Math.sin(angle) * distance;
+        // this.camera.position.x = this.cube.position.x + height;
+
+        // Look at player
+        this.camera.lookAt(this.cube.position);
     }
 
     updateEnemies() {
