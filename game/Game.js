@@ -169,8 +169,8 @@ export class Game {
             const enemy = this.enemies[i];
             enemy.update(this.ground);
 
-            // Remove enemies that are behind the player
-            if (enemy.position.z > this.cube.position.z + 10) {
+            // Remove enemies that fall off the map
+            if (enemy.position.y < this.cube.position.y - 5) {
                 this.scene.remove(enemy);
                 this.enemies.splice(i, 1);
                 continue;
@@ -186,17 +186,25 @@ export class Game {
 
         if (this.frames % this.spawnRate === 0) {
             if (this.spawnRate > 20) this.spawnRate -= 10;
+
+            // Randomize enemy spawn point
+            const enemySpawnDistance = 35;
+            const randomAngle = Math.random() * 2 * Math.PI;
+            const sx = Math.cos(randomAngle) * enemySpawnDistance;
+            const sz = Math.sin(randomAngle) * enemySpawnDistance;
+
             // Calculate the spawn positon
-            const spawnPosition = { x: (Math.random() - 0.5) * 30, y: 0, z: -35 }
+            const spawnPosition = { x: sx, y: 0, z: sz }
 
             // Calculate the angle between enemy and player and adjust enemy rotation
             const dx = this.cube.position.x - spawnPosition.x;
             const dz = this.cube.position.z - spawnPosition.z;
-            const angle = Math.atan2(dx, dz);
+            const enemyPlayerAngle = Math.atan2(dx, dz);
 
             // Calculate enemy velocity based on the angle
-            const vx = Math.sin(angle) * this.enemyMovementSpeed;
-            const vz = Math.cos(angle) * this.enemyMovementSpeed;
+            const vx = Math.sin(enemyPlayerAngle) * this.enemyMovementSpeed;
+            const vz = Math.cos(enemyPlayerAngle) * this.enemyMovementSpeed;
+
 
             const enemy = new Box({
                 width: 1, height: 1, depth: 1,
@@ -205,11 +213,11 @@ export class Game {
                 velocity: { x: vx, y: 0, z: vz },
                 acceleration: true,
                 speed: this.enemyMovementSpeed,
-                angle: angle,
+                angle: enemyPlayerAngle,
             });
 
             // Adjust enemy rotation to face player, add to scene, and push to enemies array
-            enemy.rotation.y = angle;
+            enemy.rotation.y = enemyPlayerAngle;
             enemy.castShadow = true;
             this.scene.add(enemy);
             this.enemies.push(enemy);
