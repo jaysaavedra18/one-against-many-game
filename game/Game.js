@@ -136,7 +136,7 @@ export class Game {
         const distance = 7;
         const height = 4;
         const angle = this.playerRotation;
-        const offsetAngle = Math.PI / 8;
+        const offsetAngle = Math.PI / 30;
 
 
         // // Position the camera behind the player based on rotation
