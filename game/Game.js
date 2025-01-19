@@ -9,7 +9,7 @@ export class Game {
         this.animationId = null;
         this.enemies = [];
         this.playerMovementSpeed = 0.15;
-        this.enemyMovementSpeed = 0.10;
+        this.enemyMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
         this.rotationSpeed = 0.05;
@@ -203,8 +203,9 @@ export class Game {
                 position: spawnPosition,
                 color: "red",
                 velocity: { x: vx, y: 0, z: vz },
-                zAcceration: true,
+                acceleration: true,
                 speed: this.enemyMovementSpeed,
+                angle: angle,
             });
 
             // Adjust enemy rotation to face player, add to scene, and push to enemies array
@@ -212,9 +213,6 @@ export class Game {
             enemy.castShadow = true;
             this.scene.add(enemy);
             this.enemies.push(enemy);
-            console.log("spawning enemy", this.enemies.length);
-            // Speed up every next enemy
-            this.enemyMovementSpeed += 0.001;
         }
     }
 
