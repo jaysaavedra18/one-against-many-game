@@ -203,8 +203,9 @@ export class Game {
                 position: spawnPosition,
                 color: "red",
                 velocity: { x: vx, y: 0, z: vz },
-                zAcceration: true,
+                acceleration: true,
                 speed: this.enemyMovementSpeed,
+                angle: angle,
             });
 
             // Adjust enemy rotation to face player, add to scene, and push to enemies array
