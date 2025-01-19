@@ -38,7 +38,7 @@ body {
   cursor: pointer;
   transition: background-color 0.2s;
 }
-
+/* Main Menu Buttons */
 .play-btn {
   background: #3b82f6;
 }
@@ -55,10 +55,27 @@ body {
   background: #16a34a;
 }
 
-.back-btn {
-  background: #6b7280;
+/* Pause Menu Buttons */
+.resume-btn {
+  background: #facc15; /* Bright yellow */
 }
 
-.back-btn:hover {
-  background: #4b5563;
+.resume-btn:hover {
+  background: #eab308;
+}
+
+.restart-btn {
+  background: #9333ea; /* Bright red */
+}
+
+.restart-btn:hover {
+  background: #7e22ce;
+}
+
+.quit-btn {
+  background: #ef4444; /* Purple */
+}
+
+.quit-btn:hover {
+  background: #dc2626;
 }

@@ -8,6 +8,7 @@
   </head>
   <body>
     <div id="menuContainer" class="menu-container">
+      <!-- Main Menu -->
       <div id="mainMenu" class="menu-content">
         <h1 class="title">Cube Runner</h1>
         <button class="button play-btn" onclick="startGame()">Play Game</button>
@@ -15,7 +16,7 @@
           Instructions
         </button>
       </div>
-
+      <!-- Instructions Menu -->
       <div id="instructionsMenu" class="menu-content menu-hidden">
         <h2 class="title">How to Play</h2>
         <p>Use WASD to move the cube</p>
@@ -24,6 +25,15 @@
         <button class="button back-btn" onclick="showMain()">
           Back to Menu
         </button>
+      </div>
+      <!-- Pause Menu -->
+      <div id="pauseMenu" class="menu-content menu-hidden">
+        <h2 class="title">Paused</h2>
+        <button class="button resume-btn" onclick="resumeGame()">Resume</button>
+        <button class="button restart-btn" onclick="startGame()">
+          Restart
+        </button>
+        <button class="button quit-btn" onclick="quitGame()">Quit</button>
       </div>
     </div>
 
