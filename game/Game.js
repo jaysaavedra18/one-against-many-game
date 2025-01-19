@@ -213,7 +213,6 @@ export class Game {
             enemy.castShadow = true;
             this.scene.add(enemy);
             this.enemies.push(enemy);
-            console.log("spawning enemy", this.enemies.length);
         }
     }
 
