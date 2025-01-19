@@ -8,6 +8,17 @@ window.startGame = () => {
     game.start();
 };
 
+window.resumeGame = () => {
+    document.getElementById("menuContainer").classList.add("menu-hidden");
+    game.resume();
+}
+
+window.quitGame = () => {
+    document.getElementById("pauseMenu").classList.add("menu-hidden");
+    document.getElementById("mainMenu").classList.remove("menu-hidden");
+    game.quit();
+}
+
 window.showInstructions = () => {
     document.getElementById("mainMenu").classList.add("menu-hidden");
     document.getElementById("instructionsMenu").classList.remove("menu-hidden");
@@ -18,6 +29,3 @@ window.showMain = () => {
     document.getElementById("instructionsMenu").classList.add("menu-hidden");
 };
 
-window.quitGame = () => {
-    game.quit();
-};

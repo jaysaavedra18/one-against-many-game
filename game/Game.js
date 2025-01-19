@@ -65,6 +65,7 @@ export class Game {
         this.spawnRate = 200;
         this.frames = 0;
         this.isGameOver = false; // Add this flag
+        this.isPaused = false;
 
         // Reset player position
         if (this.cube) {
@@ -80,17 +81,6 @@ export class Game {
         }
         // Clear the enemies array
         this.enemies = [];
-    }
-
-    animate = () => {
-        this.animationId = requestAnimationFrame(this.animate);
-        this.renderer.render(this.scene, this.camera);
-
-        this.updatePlayer();
-        this.updateEnemies();
-        this.spawnEnemies();
-
-        this.frames++;
     }
 
     updatePlayer() {
@@ -194,6 +184,24 @@ export class Game {
         }
     }
 
+    animate = () => {
+        this.animationId = requestAnimationFrame(this.animate);
+        this.renderer.render(this.scene, this.camera);
+
+        // Check for pause menu
+        if (this.controls.keys.escape.pressed) {
+            if (!this.isPaused) {
+                this.pause();
+            }
+        }
+
+        this.updatePlayer();
+        this.updateEnemies();
+        this.spawnEnemies();
+
+        this.frames++;
+    }
+
     gameOver() {
         this.isGameOver = true;
         cancelAnimationFrame(this.animationId);
@@ -206,11 +214,21 @@ export class Game {
     }
 
     pause() {
+        this.isPaused = true;
         cancelAnimationFrame(this.animationId);
+        document.getElementById("menuContainer").classList.remove("menu-hidden");
+        document.getElementById("mainMenu").classList.add("menu-hidden");
+        document.getElementById("pauseMenu").classList.remove("menu-hidden");
     }
 
     resume() {
+        this.isPaused = false;
         this.animate();
+    }
+
+    restart() {
+        this.reset();
+        this.resume();
     }
 
     quit() {
