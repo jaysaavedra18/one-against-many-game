@@ -9,7 +9,7 @@ export class Game {
         this.animationId = null;
         this.enemies = [];
         this.playerMovementSpeed = 0.15;
-        this.enemyMovementSpeed = 0.05;
+        this.enemyMovementSpeed = 0.10;
         this.spawnRate = 200;
         this.frames = 0;
         this.rotationSpeed = 0.05;
