@@ -11,12 +11,13 @@ export class Game {
         this.playerMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
+        this.rotationSpeed = 0.05;
 
         this.setupScene();
         this.setupObjects();
         this.setupLights();
-        this.controls = new Controls();
         this.reset();
+        this.controls = new Controls();
     }
 
     setupScene() {
@@ -88,6 +89,12 @@ export class Game {
         this.spawnEnemies();
 
         this.frames++;
+    }
+
+    updateCamera() {
+        // Rotating the camera left and right
+        if (this.controls.keys.arrowLeft.pressed) this.camera.position.x -= 0.1;
+        else if (this.controls.keys.arrowRight.pressed) this.camera.position.x += 0.1;
     }
 
     updatePlayer() {
