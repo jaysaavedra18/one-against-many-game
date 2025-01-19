@@ -10,24 +10,25 @@ export class Box extends THREE.Mesh {
         velocity = { x: 0, y: 0, z: 0 },
         position = { x: 0, y: 0, z: 0 },
         gravity = -0.005,
-        zAcceration = false,
+        acceleration = false,
+
     }) {
         super(
             new THREE.BoxGeometry(width, height, depth),
             new THREE.MeshStandardMaterial({ color })
         );
-        this.setupProperties(width, height, depth, position, velocity, gravity, zAcceration);
+        this.setupProperties(width, height, depth, position, velocity, gravity, acceleration);
         this.updateSides();
     }
 
-    setupProperties(width, height, depth, position, velocity, gravity, zAcceration) {
+    setupProperties(width, height, depth, position, velocity, gravity, acceleration) {
         this.height = height;
         this.width = width;
         this.depth = depth;
         this.position.set(position.x, position.y, position.z);
         this.velocity = velocity;
         this.gravity = gravity;
-        this.zAcceration = zAcceration;
+        this.acceleration = acceleration;
     }
 
     updateSides() {
@@ -41,7 +42,10 @@ export class Box extends THREE.Mesh {
 
     update(ground) {
         this.updateSides();
-        if (this.zAcceration) this.velocity.z += 0.001;
+        if (this.acceleration) {
+            this.velocity.x += 0.001 * this.velocity.x;
+            this.velocity.z += 0.001 * this.velocity.z;
+        }
         this.updatePosition();
         this.applyGravity(ground);
     }
