@@ -8,7 +8,7 @@ export class Game {
     constructor() {
         this.animationId = null;
         this.enemies = [];
-        this.playerMovementSpeed = 0.10;
+        this.playerMovementSpeed = 0.15;
         this.spawnRate = 200;
         this.frames = 0;
         this.rotationSpeed = 0.05;
@@ -56,9 +56,23 @@ export class Game {
     setupLights() {
         const light = new THREE.DirectionalLight(0xffffff, 5);
         light.castShadow = true;
-        light.position.set(3, 5, 1);
+
+        // Set the light's position to cover the game area
+        light.position.set(25, 25, 25); // Position light high and at an angle to cover the area
+
+        // Adjust shadow settings for better coverage
+        light.shadow.mapSize.width = 2048;  // Higher resolution for better shadow quality
+        light.shadow.mapSize.height = 2048;
+        light.shadow.camera.near = 1;       // Shadow camera near clipping plane
+        light.shadow.camera.far = 50;      // Shadow camera far clipping plane, covering the entire area
+        light.shadow.camera.left = -25;    // Set the left boundary of the shadow camera
+        light.shadow.camera.right = 25;    // Set the right boundary
+        light.shadow.camera.top = 25;      // Set the top boundary
+        light.shadow.camera.bottom = -25;  // Set the bottom boundary
+
+
         this.scene.add(light);
-        this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        // this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     }
 
     reset() {
