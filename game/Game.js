@@ -11,7 +11,7 @@ export class Game {
         this.playerMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
-        this.rotationSpeed = 0.05;
+        this.playerRotation = 0; // Track player rotation angle
 
         this.setupScene();
         this.setupObjects();
