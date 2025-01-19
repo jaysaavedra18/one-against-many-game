@@ -11,6 +11,7 @@ export class Box extends THREE.Mesh {
         position = { x: 0, y: 0, z: 0 },
         gravity = -0.005,
         zAcceration = false,
+
     }) {
         super(
             new THREE.BoxGeometry(width, height, depth),
@@ -41,7 +42,10 @@ export class Box extends THREE.Mesh {
 
     update(ground) {
         this.updateSides();
-        if (this.zAcceration) this.velocity.z += 0.001;
+        if (this.zAcceration) {
+            this.velocity.x += 0.001 * this.velocity.x;
+            this.velocity.z += 0.001 * this.velocity.z;
+        }
         this.updatePosition();
         this.applyGravity(ground);
     }

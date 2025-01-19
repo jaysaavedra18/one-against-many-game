@@ -9,6 +9,7 @@ export class Game {
         this.animationId = null;
         this.enemies = [];
         this.playerMovementSpeed = 0.15;
+        this.enemyMovementSpeed = 0.05;
         this.spawnRate = 200;
         this.frames = 0;
         this.rotationSpeed = 0.05;
@@ -41,6 +42,7 @@ export class Game {
             width: 1, height: 1, depth: 1,
             color: 0x1e90ff,
             velocity: { x: 0, y: -0.01, z: 0 },
+            speed: 0.15,
         });
         this.cube.castShadow = true;
         this.scene.add(this.cube);
@@ -88,11 +90,10 @@ export class Game {
         }
 
         // Remove all existing enemies
-        if (this.scene) {
-            [...this.enemies].forEach(enemy => {
-                this.scene.remove(enemy);
-            });
-        }
+        [...this.enemies].forEach(enemy => {
+            this.scene.remove(enemy);
+        });
+
         // Clear the enemies array
         this.enemies = [];
     }
@@ -182,19 +183,38 @@ export class Game {
     }
 
     spawnEnemies() {
+
         if (this.frames % this.spawnRate === 0) {
             if (this.spawnRate > 20) this.spawnRate -= 10;
+            // Calculate the spawn positon
+            const spawnPosition = { x: (Math.random() - 0.5) * 30, y: 0, z: -35 }
+
+            // Calculate the angle between enemy and player and adjust enemy rotation
+            const dx = this.cube.position.x - spawnPosition.x;
+            const dz = this.cube.position.z - spawnPosition.z;
+            const angle = Math.atan2(dx, dz);
+
+            // Calculate enemy velocity based on the angle
+            const vx = Math.sin(angle) * this.enemyMovementSpeed;
+            const vz = Math.cos(angle) * this.enemyMovementSpeed;
+
             const enemy = new Box({
                 width: 1, height: 1, depth: 1,
-                position: { x: (Math.random() - 0.5) * 30, y: 0, z: -35 },
+                position: spawnPosition,
                 color: "red",
-                velocity: { x: 0, y: 0, z: 0.005 },
+                velocity: { x: vx, y: 0, z: vz },
                 zAcceration: true,
+                speed: this.enemyMovementSpeed,
             });
+
+            // Adjust enemy rotation to face player, add to scene, and push to enemies array
+            enemy.rotation.y = angle;
             enemy.castShadow = true;
             this.scene.add(enemy);
             this.enemies.push(enemy);
             console.log("spawning enemy", this.enemies.length);
+            // Speed up every next enemy
+            this.enemyMovementSpeed += 0.001;
         }
     }
 
