@@ -38,7 +38,7 @@ body {
   cursor: pointer;
   transition: background-color 0.2s;
 }
-
+/* Main Menu Buttons */
 .play-btn {
   background: #3b82f6;
 }
@@ -53,14 +53,6 @@ body {
 
 .instructions-btn:hover {
   background: #16a34a;
-}
-
-.back-btn {
-  background: #6b7280;
-}
-
-.back-btn:hover {
-  background: #4b5563;
 }
 
 /* Pause Menu Buttons */
