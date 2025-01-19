@@ -1,3 +1,5 @@
+# this file is no longer relevant
+
 import subprocess
 import sys
 
