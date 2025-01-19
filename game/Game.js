@@ -13,6 +13,7 @@ export class Game {
         this.frames = 0;
         this.rotationSpeed = 0.05;
         this.playerRotation = 0; // Track player rotation angle
+        this.isPaused = false;
 
         this.setupScene();
         this.setupObjects();
