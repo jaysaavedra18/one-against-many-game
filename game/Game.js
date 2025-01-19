@@ -74,7 +74,7 @@ export class Game {
 
 
         this.scene.add(light);
-        // this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
     }
 
     reset() {
